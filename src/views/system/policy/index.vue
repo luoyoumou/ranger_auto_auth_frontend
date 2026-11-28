@@ -1340,16 +1340,18 @@ const handleSubmitAddOrModify = () => {
       }
     } else if (formData.policy_type === 'hbase') {
       if (formData.hbase_ns_arr.length > 1) {
-        finalDbOrUrl = formData.hbase_ns_arr.join(';')
+        // 修复点：多个 Namespace 时，必须显式加上 ':*'，代表选中该 Namespace 下的所有表
+        finalDbOrUrl = formData.hbase_ns_arr.map(ns => `${ns}:*`).join(';')
       } else if (formData.hbase_ns_arr.length === 1) {
         const ns = formData.hbase_ns_arr[0]
+        // 如果用户没有选表，默认授权整个 Namespace
         if (formData.hbase_table_arr.length === 0) {
-          finalDbOrUrl = ns === 'default' ? '*' : `${ns}:*`
+          finalDbOrUrl = `${ns}:*` 
         } else if (formData.hbase_table_arr.length === 1) {
-          finalDbOrUrl = ns === 'default' ? formData.hbase_table_arr[0] : `${ns}:${formData.hbase_table_arr[0]}`
+          finalDbOrUrl = `${ns}:${formData.hbase_table_arr[0]}`
         } else {
           const tbs = formData.hbase_table_arr.join(',')
-          finalDbOrUrl = ns === 'default' ? `[${tbs}]` : `${ns}:[${tbs}]`
+          finalDbOrUrl = `${ns}:[${tbs}]`
         }
       }
       finalHbaseCf = formData.hbase_cf
