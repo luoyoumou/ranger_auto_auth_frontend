@@ -1340,7 +1340,6 @@ const handleSubmitAddOrModify = () => {
       }
     } else if (formData.policy_type === 'hbase') {
       if (formData.hbase_ns_arr.length > 1) {
-        // 修复点：多个 Namespace 时，必须显式加上 ':*'，代表选中该 Namespace 下的所有表
         finalDbOrUrl = formData.hbase_ns_arr.map(ns => `${ns}:*`).join(';')
       } else if (formData.hbase_ns_arr.length === 1) {
         const ns = formData.hbase_ns_arr[0]
